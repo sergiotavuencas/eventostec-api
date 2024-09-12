@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/event_db
+    username: event
+    password: event
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
