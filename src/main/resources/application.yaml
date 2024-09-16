@@ -7,3 +7,8 @@ spring:
 
   jpa:
     show-sql: true
+
+aws:
+  region: sa-east-1
+  bucket:
+    name: eventostec-svt2-imgs
