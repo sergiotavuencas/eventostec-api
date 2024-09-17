@@ -1,10 +1,10 @@
 package br.com.tavuencas.sergio.eventostec_api.application.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public record EventRequestDto(
+public record EventResponseDto(
+        UUID id,
         String title,
         String description,
         String city,
@@ -12,5 +12,5 @@ public record EventRequestDto(
         LocalDateTime date,
         Boolean remote,
         String eventUrl,
-        MultipartFile image) {
+        String imgUrl) {
 }
