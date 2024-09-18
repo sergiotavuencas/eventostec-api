@@ -1,5 +1,6 @@
 package br.com.tavuencas.sergio.eventostec_api.adapters.inbound;
 
+import br.com.tavuencas.sergio.eventostec_api.application.dto.EventDetailsDto;
 import br.com.tavuencas.sergio.eventostec_api.application.dto.EventRequestDto;
 import br.com.tavuencas.sergio.eventostec_api.application.dto.EventResponseDto;
 import br.com.tavuencas.sergio.eventostec_api.domain.model.Event;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/events")
@@ -38,6 +40,12 @@ public class EventController {
         Event newEvent = this.service.create(dto);
 
         return ResponseEntity.ok(newEvent);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable("id") UUID id) {
+        EventDetailsDto response = this.service.getEventById(id);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping

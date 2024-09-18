@@ -1,7 +1,9 @@
 package br.com.tavuencas.sergio.eventostec_api.domain.service;
 
+import br.com.tavuencas.sergio.eventostec_api.application.dto.EventDetailsDto;
 import br.com.tavuencas.sergio.eventostec_api.application.dto.EventRequestDto;
 import br.com.tavuencas.sergio.eventostec_api.application.dto.EventResponseDto;
+import br.com.tavuencas.sergio.eventostec_api.domain.model.Coupon;
 import br.com.tavuencas.sergio.eventostec_api.domain.model.Event;
 import br.com.tavuencas.sergio.eventostec_api.domain.repository.EventRepository;
 import com.amazonaws.services.s3.AmazonS3;
@@ -20,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,13 +36,16 @@ public class EventService {
 
     private final AddressService addressService;
 
+    private final CouponService couponService;
+
     @Value("${aws.bucket.name}")
     private String bucketName;
 
-    public EventService(AmazonS3 s3Client, EventRepository repository, AddressService addressService) {
+    public EventService(AmazonS3 s3Client, EventRepository repository, AddressService addressService, CouponService couponService) {
         this.s3Client = s3Client;
         this.repository = repository;
         this.addressService = addressService;
+        this.couponService = couponService;
     }
 
     public Event create(EventRequestDto request) {
@@ -64,6 +70,32 @@ public class EventService {
         }
 
         return newEvent;
+    }
+
+    public EventDetailsDto getEventById(UUID id) {
+        Event event = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        List<Coupon> coupons = this.couponService.consultCoupons(id, new Date());
+
+        List<EventDetailsDto.CouponDto> couponDtos = coupons.stream()
+                .map(coupon -> new EventDetailsDto.CouponDto(
+                        coupon.getCode(),
+                        coupon.getDiscount(),
+                        coupon.getValid()
+                )).toList();
+
+        return new EventDetailsDto(
+                event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getAddress() != null ? event.getAddress().getCity() : "",
+                event.getAddress() != null ? event.getAddress().getUf() : "",
+                event.getDate(),
+                event.getRemote(),
+                event.getEventUrl(),
+                event.getImgUrl(),
+                couponDtos);
     }
 
     public List<EventResponseDto> getUpcomingEvents(int page, int size) {
@@ -111,11 +143,11 @@ public class EventService {
 
         try {
             File file = this.converMultipartToFile(multipartFile);
-            s3Client.putObject(bucketName, filename, file);
+            this.s3Client.putObject(bucketName, filename, file);
 
             cleanUp(Path.of(file.getPath()));
 
-            return s3Client.getUrl(bucketName, filename).toString();
+            return this.s3Client.getUrl(bucketName, filename).toString();
 
         } catch (Exception e) {
             throw new AmazonS3Exception("");
