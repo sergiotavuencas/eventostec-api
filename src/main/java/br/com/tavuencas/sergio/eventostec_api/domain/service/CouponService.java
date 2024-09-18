@@ -36,6 +36,7 @@ public class CouponService {
         return this.repository.save(newCoupon);
     }
 
-        return repository.save(newCoupon);
+    public List<Coupon> consultCoupons(UUID eventId, Date currentDate) {
+        return this.repository.findByEventIdAndValidAfter(eventId, currentDate);
     }
 }

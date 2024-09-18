@@ -3,12 +3,11 @@ package br.com.tavuencas.sergio.eventostec_api.adapters.inbound;
 import br.com.tavuencas.sergio.eventostec_api.application.dto.CouponRequestDto;
 import br.com.tavuencas.sergio.eventostec_api.domain.model.Coupon;
 import br.com.tavuencas.sergio.eventostec_api.domain.service.CouponService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +21,12 @@ public class CouponController {
     }
 
     @PostMapping("/event/{eventId}")
-    public ResponseEntity<Coupon> addCouponToEvent(@PathVariable UUID eventId, CouponRequestDto request) {
+    public ResponseEntity<Coupon> addCouponToEvent(
+            @PathVariable UUID eventId,
+            @RequestParam("code") String code,
+            @RequestParam("discount") Integer discount,
+            @RequestParam("valid") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date valid) {
+        CouponRequestDto request = new CouponRequestDto(code, discount, valid);
         Coupon coupon = service.addCouponToEvent(eventId, request);
         return ResponseEntity.ok(coupon);
     }
