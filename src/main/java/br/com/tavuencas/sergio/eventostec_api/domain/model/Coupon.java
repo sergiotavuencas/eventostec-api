@@ -1,5 +1,6 @@
 package br.com.tavuencas.sergio.eventostec_api.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +28,6 @@ public class Coupon {
 
     @ManyToOne
     @JoinColumn(name = "event_id")
+    @JsonBackReference
     private Event event;
 }

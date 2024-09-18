@@ -8,6 +8,7 @@ import br.com.tavuencas.sergio.eventostec_api.domain.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,9 +30,11 @@ public class CouponService {
         Coupon newCoupon = new Coupon();
         newCoupon.setCode(request.code());
         newCoupon.setDiscount(request.discount());
-        newCoupon.setValid(new Date(request.valid()));
+        newCoupon.setValid(request.valid());
         newCoupon.setEvent(event);
 
+        return this.repository.save(newCoupon);
+    }
 
         return repository.save(newCoupon);
     }
