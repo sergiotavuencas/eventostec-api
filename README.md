@@ -18,7 +18,7 @@ This project was developed to deepen my knowledge of Spring Boot and AWS by foll
 - Spring Boot
 - Spring MVC
 - PostgreSQL
-- AWS (IAM, EC2, SC3, RDS, and Secret Manager)
+- AWS (IAM, EC2, S3, RDS, and Secrets Manager)
 - Docker
 
 ## Best Practices
